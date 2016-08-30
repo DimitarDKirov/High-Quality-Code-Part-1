@@ -3,175 +3,175 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace mini4ki
+namespace MinesGame
 {
-	public class minite
+	public class Mines
 	{
-		public class tochki
-		{
-			string име;
-			int то4ки;
+		public class UserPoints
+        {
+			string name;
+			int points;
 
-			public string Име
-			{
-				get { return име; }
-				set { име = value; }
+			public string Name
+            {
+				get { return name; }
+				set { name = value; }
 			}
 
-			public int То4ки
-			{
-				get { return то4ки; }
-				set { то4ки = value; }
+			public int Points
+            {
+				get { return points; }
+				set { points = value; }
 			}
 
-			public tochki() { }
+			public UserPoints() { }
 
-			public tochki(string име, int то4ки)
+			public UserPoints(string name, int points)
 			{
-				this.име = име;
-				this.то4ки = то4ки;
+				this.Name = name;
+				this.Points = points;
 			}
 		}
 
-		static void Main(string[] аргументи)
+		static void Main(string[] args)
 		{
-			string komanda = string.Empty;
-			char[,] poleto = create_igralno_pole();
-			char[,] bombite = slojibombite();
-			int broya4 = 0;
-			bool grum = false;
-			List<tochki> shampion4eta = new List<tochki>(6);
-			int red = 0;
-			int kolona = 0;
-			bool flag = true;
+			string command = string.Empty;
+			char[,] gameField = InitializeGameBoard();
+			char[,] minesPosition = InitializeMines();
+			int counter = 0;
+			bool isMineFound = false;
+			List<UserPoints> users = new List<UserPoints>(6);
+			int row = 0;
+			int column = 0;
+			bool isGameInBeignState = true;
 			const int maks = 35;
-			bool flag2 = false;
+			bool isGameFinishedWithNoMineFound = false;
 
 			do
 			{
-				if (flag)
+				if (isGameInBeignState)
 				{
 					Console.WriteLine("Hajde da igraem na “Mini4KI”. Probvaj si kasmeta da otkriesh poleteta bez mini4ki." +
 					" Komanda 'top' pokazva klasiraneto, 'restart' po4va nova igra, 'exit' izliza i hajde 4ao!");
-					dumpp(poleto);
-					flag = false;
+					DrawGameBoard(gameField);
+					isGameInBeignState = false;
 				}
 				Console.Write("Daj red i kolona : ");
-				komanda = Console.ReadLine().Trim();
-				if (komanda.Length >= 3)
+				command = Console.ReadLine().Trim();
+				if (command.Length >= 3)
 				{
-					if (int.TryParse(komanda[0].ToString(), out red) &&
-					int.TryParse(komanda[2].ToString(), out kolona) &&
-						red <= poleto.GetLength(0) && kolona <= poleto.GetLength(1))
+					if (int.TryParse(command[0].ToString(), out row) &&
+					int.TryParse(command[2].ToString(), out column) &&
+						row <= gameField.GetLength(0) && column <= gameField.GetLength(1))
 					{
-						komanda = "turn";
+						command = "turn";
 					}
 				}
-				switch (komanda)
+				switch (command)
 				{
 					case "top":
-						klasacia(shampion4eta);
+						PrintUserRatng(users);
 						break;
 					case "restart":
-						poleto = create_igralno_pole();
-						bombite = slojibombite();
-						dumpp(poleto);
-						grum = false;
-						flag = false;
+						gameField = InitializeGameBoard();
+						minesPosition = InitializeMines();
+						DrawGameBoard(gameField);
+						isMineFound = false;
+						isGameInBeignState = false;
 						break;
 					case "exit":
 						Console.WriteLine("4a0, 4a0, 4a0!");
 						break;
 					case "turn":
-						if (bombite[red, kolona] != '*')
+						if (minesPosition[row, column] != '*')
 						{
-							if (bombite[red, kolona] == '-')
+							if (minesPosition[row, column] == '-')
 							{
-								tisinahod(poleto, bombite, red, kolona);
-								broya4++;
+								tisinahod(gameField, minesPosition, row, column);
+								counter++;
 							}
-							if (maks == broya4)
+							if (maks == counter)
 							{
-								flag2 = true;
+								isGameFinishedWithNoMineFound = true;
 							}
 							else
 							{
-								dumpp(poleto);
+								DrawGameBoard(gameField);
 							}
 						}
 						else
 						{
-							grum = true;
+							isMineFound = true;
 						}
 						break;
 					default:
 						Console.WriteLine("\nGreshka! nevalidna Komanda\n");
 						break;
 				}
-				if (grum)
+				if (isMineFound)
 				{
-					dumpp(bombite);
+					DrawGameBoard(minesPosition);
 					Console.Write("\nHrrrrrr! Umria gerojski s {0} to4ki. " +
-						"Daj si niknejm: ", broya4);
-					string niknejm = Console.ReadLine();
-					tochki t = new tochki(niknejm, broya4);
-					if (shampion4eta.Count < 5)
+						"Daj si niknejm: ", counter);
+					string username = Console.ReadLine();
+					UserPoints t = new UserPoints(username, counter);
+					if (users.Count < 5)
 					{
-						shampion4eta.Add(t);
+						users.Add(t);
 					}
 					else
 					{
-						for (int i = 0; i < shampion4eta.Count; i++)
+						for (int i = 0; i < users.Count; i++)
 						{
-							if (shampion4eta[i].То4ки < t.То4ки)
+							if (users[i].Points < t.Points)
 							{
-								shampion4eta.Insert(i, t);
-								shampion4eta.RemoveAt(shampion4eta.Count - 1);
+								users.Insert(i, t);
+								users.RemoveAt(users.Count - 1);
 								break;
 							}
 						}
 					}
-					shampion4eta.Sort((tochki r1, tochki r2) => r2.Име.CompareTo(r1.Име));
-					shampion4eta.Sort((tochki r1, tochki r2) => r2.То4ки.CompareTo(r1.То4ки));
-					klasacia(shampion4eta);
+					users.Sort((UserPoints r1, UserPoints r2) => r2.Name.CompareTo(r1.Name));
+					users.Sort((UserPoints r1, UserPoints r2) => r2.Points.CompareTo(r1.Points));
+					PrintUserRatng(users);
 
-					poleto = create_igralno_pole();
-					bombite = slojibombite();
-					broya4 = 0;
-					grum = false;
-					flag = true;
+					gameField = InitializeGameBoard();
+					minesPosition = InitializeMines();
+					counter = 0;
+					isMineFound = false;
+					isGameInBeignState = true;
 				}
-				if (flag2)
+				if (isGameFinishedWithNoMineFound)
 				{
 					Console.WriteLine("\nBRAVOOOS! Otvri 35 kletki bez kapka kryv.");
-					dumpp(bombite);
+					DrawGameBoard(minesPosition);
 					Console.WriteLine("Daj si imeto, batka: ");
-					string imeee = Console.ReadLine();
-					tochki to4kii = new tochki(imeee, broya4);
-					shampion4eta.Add(to4kii);
-					klasacia(shampion4eta);
-					poleto = create_igralno_pole();
-					bombite = slojibombite();
-					broya4 = 0;
-					flag2 = false;
-					flag = true;
+					string username = Console.ReadLine();
+					UserPoints userPoints = new UserPoints(username, counter);
+					users.Add(userPoints);
+					PrintUserRatng(users);
+					gameField = InitializeGameBoard();
+					minesPosition = InitializeMines();
+					counter = 0;
+					isGameFinishedWithNoMineFound = false;
+					isGameInBeignState = true;
 				}
 			}
-			while (komanda != "exit");
+			while (command != "exit");
 			Console.WriteLine("Made in Bulgaria - Uauahahahahaha!");
 			Console.WriteLine("AREEEEEEeeeeeee.");
 			Console.Read();
 		}
 
-		private static void klasacia(List<tochki> to4kii)
+		private static void PrintUserRatng(List<UserPoints> users)
 		{
 			Console.WriteLine("\nTo4KI:");
-			if (to4kii.Count > 0)
+			if (users.Count > 0)
 			{
-				for (int i = 0; i < to4kii.Count; i++)
+				for (int i = 0; i < users.Count; i++)
 				{
 					Console.WriteLine("{0}. {1} --> {2} kutii",
-						i + 1, to4kii[i].Име, to4kii[i].То4ки);
+						i + 1, users[i].Name, users[i].Points);
 				}
 				Console.WriteLine();
 			}
@@ -189,18 +189,18 @@ namespace mini4ki
 			POLE[RED, KOLONA] = kolkoBombi;
 		}
 
-		private static void dumpp(char[,] board)
+		private static void DrawGameBoard(char[,] board)
 		{
-			int RRR = board.GetLength(0);
-			int KKK = board.GetLength(1);
+			int rows = board.GetLength(0);
+			int columns = board.GetLength(1);
 			Console.WriteLine("\n    0 1 2 3 4 5 6 7 8 9");
 			Console.WriteLine("   ---------------------");
-			for (int i = 0; i < RRR; i++)
+			for (int row = 0; row < rows; row++)
 			{
-				Console.Write("{0} | ", i);
-				for (int j = 0; j < KKK; j++)
+				Console.Write("{0} | ", row);
+				for (int column = 0; column < columns; column++)
 				{
-					Console.Write(string.Format("{0} ", board[i, j]));
+					Console.Write(string.Format("{0} ", board[row, column]));
 				}
 				Console.Write("|");
 				Console.WriteLine();
@@ -208,23 +208,23 @@ namespace mini4ki
 			Console.WriteLine("   ---------------------\n");
 		}
 
-		private static char[,] create_igralno_pole()
+		private static char[,] InitializeGameBoard()
 		{
 			int boardRows = 5;
 			int boardColumns = 10;
 			char[,] board = new char[boardRows, boardColumns];
-			for (int i = 0; i < boardRows; i++)
+			for (int row = 0; row < boardRows; row++)
 			{
-				for (int j = 0; j < boardColumns; j++)
+				for (int col = 0; col < boardColumns; col++)
 				{
-					board[i, j] = '?';
+					board[row, col] = '?';
 				}
 			}
 
 			return board;
 		}
 
-		private static char[,] slojibombite()
+		private static char[,] InitializeMines()
 		{
 			int Редове = 5;
 			int Колони = 10;

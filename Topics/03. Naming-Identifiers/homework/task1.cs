@@ -14,10 +14,10 @@ class EntryPoint
         }
     }
 
-    public static void Main()
-    {
-        EntryPoint.Printer printer = new EntryPoint.Printer();
-        printer.ConsolePrinter(true);
-    }
+    //public static void Main()
+    //{
+    //    EntryPoint.Printer printer = new EntryPoint.Printer();
+    //    printer.ConsolePrinter(true);
+    //}
 }
 
