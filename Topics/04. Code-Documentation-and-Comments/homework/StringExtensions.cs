@@ -10,6 +10,10 @@
 
     public static class StringExtensions
     {
+        /// <summary>
+        /// Creates MD5 hash
+        /// </summary>
+        /// <returns>MD5 hash</returns>
         public static string ToMd5Hash(this string input)
         {
             var md5Hash = MD5.Create();
@@ -32,12 +36,20 @@
             return builder.ToString();
         }
 
+        /// <summary>
+        /// Checks if the input string is true-like ("true", "ok", "yes", "1", "да")
+        /// </summary>
+        /// <returns>True if input string is true-like</returns>
         public static bool ToBoolean(this string input)
         {
             var stringTrueValues = new[] { "true", "ok", "yes", "1", "да" };
             return stringTrueValues.Contains(input.ToLower());
         }
 
+        /// <summary>
+        /// Converts the input string to short
+        /// </summary>
+        /// <returns>Short value</returns>
         public static short ToShort(this string input)
         {
             short shortValue;
@@ -208,6 +220,15 @@
             var bytesArray = new byte[input.Length * sizeof(char)];
             Buffer.BlockCopy(input.ToCharArray(), 0, bytesArray, 0, bytesArray.Length);
             return bytesArray;
+        }
+    }
+
+    class test
+    {
+        public void testa()
+        {
+            string x="";
+           var r= x.ToMd5Hash();
         }
     }
 }
