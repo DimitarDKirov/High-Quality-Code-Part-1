@@ -8,11 +8,11 @@ namespace Methods
         {
             if (a <= 0 || b <= 0 || c <= 0)
             {
-                Console.Error.WriteLine("Sides should be positive.");
-                return -1;
+                throw new ArgumentException("Sides should be positive.");
             }
-            double s = (a + b + c) / 2;
-            double area = Math.Sqrt(s * (s - a) * (s - b) * (s - c));
+
+            double sides = (a + b + c) / 2;
+            double area = Math.Sqrt(sides * (sides - a) * (sides - b) * (sides - c));
             return area;
         }
 
@@ -30,9 +30,8 @@ namespace Methods
                 case 7: return "seven";
                 case 8: return "eight";
                 case 9: return "nine";
+                default: throw new ArgumentException("Invalid number!");
             }
-
-            return "Invalid number!";
         }
 
         static int FindMax(params int[] elements)
@@ -49,6 +48,7 @@ namespace Methods
                     elements[0] = elements[i];
                 }
             }
+
             return elements[0];
         }
 
@@ -69,7 +69,7 @@ namespace Methods
         }
 
 
-        static double CalcDistance(double x1, double y1, double x2, double y2, 
+        static double CalcDistance(double x1, double y1, double x2, double y2,
             out bool isHorizontal, out bool isVertical)
         {
             isHorizontal = (y1 == y2);
@@ -82,11 +82,11 @@ namespace Methods
         static void Main()
         {
             Console.WriteLine(CalcTriangleArea(3, 4, 5));
-            
+
             Console.WriteLine(NumberToDigit(5));
-            
+
             Console.WriteLine(FindMax(5, -1, 3, 2, 14, 2, 3));
-            
+
             PrintAsNumber(1.3, "f");
             PrintAsNumber(0.75, "%");
             PrintAsNumber(2.30, "r");

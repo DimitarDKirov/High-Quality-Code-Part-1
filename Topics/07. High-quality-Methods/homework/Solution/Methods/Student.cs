@@ -14,7 +14,7 @@ namespace Methods
         {
             DateTime firstDate = Student.GetBirthDate(this.OtherInfo);
             DateTime secondDate = Student.GetBirthDate(other.OtherInfo);
-            return firstDate > secondDate;
+            return firstDate < secondDate;
         }
 
         private static DateTime GetBirthDate(string otherInfo)
@@ -31,6 +31,7 @@ namespace Methods
             }
 
             string birthDateSubPart = otherInfo.Substring(birthDateStartIndex);
+
             DateTime birthDate;
             if(!DateTime.TryParse(birthDateSubPart, out birthDate))
             {
